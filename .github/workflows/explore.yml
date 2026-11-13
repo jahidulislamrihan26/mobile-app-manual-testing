@@ -3,6 +3,11 @@ name: Exploratory session
 # Runs the exploratory scenarios on an Android emulator and saves a screenshot, the UI tree and a log for each, plus a video of one purchase.
 on:
   workflow_dispatch:
+    inputs:
+      only:
+        description: 'Only run scenarios whose name starts with one of these, e.g. "s08|s13". Empty runs all.'
+        required: false
+        default: ''
 
 permissions:
   contents: read
@@ -30,6 +35,8 @@ jobs:
           bash scripts/install-maestro.sh
       - name: Run the scenarios on an emulator
         uses: reactivecircus/android-emulator-runner@v2
+        env:
+          ONLY: ${{ github.event.inputs.only }}
         with:
           api-level: 30
           target: default

@@ -9,6 +9,8 @@ sleep 45
 cd exploration || exit 1
 for f in scenarios/*.yaml; do
   name=$(basename "$f" .yaml)
+  # ONLY="s08|s09" runs just those scenarios (used to repeat part of a session)
+  if [ -n "${ONLY:-}" ] && ! echo "$name" | grep -Eq "^(${ONLY})"; then continue; fi
   echo "=== $name"
   if [ "$name" = "s13-review-card-number" ]; then
     (adb shell screenrecord --time-limit 90 /sdcard/purchase.mp4 &) >/dev/null 2>&1

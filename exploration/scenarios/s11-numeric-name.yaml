@@ -10,14 +10,19 @@ name: "Use only digits as the full name"
 - runFlow: ../subflows/checkout-to-address.yaml
 - tapOn: "Full Name.*input field"
 - inputText: "12345"
+- hideKeyboard
 - tapOn: "Address Line 1.*input field"
 - inputText: "12 Analytical Street"
+- hideKeyboard
 - tapOn: "City.*input field"
 - inputText: "London"
+- hideKeyboard
 - tapOn: "Zip Code.*input field"
 - inputText: "N1 9GU"
+- hideKeyboard
 - tapOn: "Country.*input field"
 - inputText: "United Kingdom"
+- hideKeyboard
 - scrollUntilVisible:
     element: "To Payment.*"
     optional: true

@@ -1,11 +1,16 @@
 appId: com.saucelabs.mydemoapp.rn
 ---
 # Fills in the card form.  Inputs: CARD_NUMBER, EXPIRY (MMYY), CVV.  Cardholder name is fixed.
+# The keyboard is dismissed after each entry: on this emulator it covers the lower fields.
 - tapOn: "Full Name.*input field"
 - inputText: "Ada Lovelace"
+- hideKeyboard
 - tapOn: "Card Number.*input field"
 - inputText: ${CARD_NUMBER}
+- hideKeyboard
 - tapOn: "Expiration Date.*input field"
 - inputText: ${EXPIRY}
+- hideKeyboard
 - tapOn: "Security Code.*input field"
 - inputText: ${CVV}
+- hideKeyboard
