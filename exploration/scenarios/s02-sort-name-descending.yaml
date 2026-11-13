@@ -1,0 +1,9 @@
+appId: com.saucelabs.mydemoapp.rn
+name: "Sort by name, Z to A"
+---
+- runFlow: ../subflows/start-app.yaml
+- tapOn: "sort button"
+- waitForAnimationToEnd
+- tapOn:
+    text: ".*Name.*Desc.*"
+    optional: true

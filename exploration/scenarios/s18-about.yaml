@@ -1,0 +1,6 @@
+appId: com.saucelabs.mydemoapp.rn
+name: "Menu: About"
+---
+- runFlow: ../subflows/start-app.yaml
+- tapOn: "open menu"
+- tapOn: "menu item about"

@@ -1,0 +1,9 @@
+appId: com.saucelabs.mydemoapp.rn
+name: "Sort by price, low to high"
+---
+- runFlow: ../subflows/start-app.yaml
+- tapOn: "sort button"
+- waitForAnimationToEnd
+- tapOn:
+    text: ".*Price.*Asc.*"
+    optional: true

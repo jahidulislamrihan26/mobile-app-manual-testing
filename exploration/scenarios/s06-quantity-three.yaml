@@ -1,0 +1,9 @@
+appId: com.saucelabs.mydemoapp.rn
+name: "Set the quantity to 3 on the product page"
+---
+- runFlow: ../subflows/start-app.yaml
+- tapOn: "Sauce Labs Backpack"
+- tapOn: "counter plus button"
+- tapOn: "counter plus button"
+- tapOn: "Add To Cart button"
+- tapOn: "cart badge"

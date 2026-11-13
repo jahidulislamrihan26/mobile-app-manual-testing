@@ -1,0 +1,47 @@
+name: Exploratory session
+
+# Runs the exploratory scenarios on an Android emulator and saves a screenshot, the UI tree and a log for each, plus a video of one purchase.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  explore:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Enable hardware acceleration for the emulator (KVM)
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Free disk space (the emulator needs several GB for its data partition)
+        run: sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/share/boost /opt/hostedtoolcache/CodeQL
+      - name: Download the app and install Maestro
+        run: |
+          bash scripts/download-app.sh android
+          bash scripts/install-maestro.sh
+      - name: Run the scenarios on an emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 30
+          target: default
+          arch: x86_64
+          profile: pixel_6
+          disk-size: 4096M
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          script: bash scripts/explore.sh
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: exploration
+          path: artifacts
+          if-no-files-found: ignore

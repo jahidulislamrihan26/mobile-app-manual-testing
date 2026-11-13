@@ -1,0 +1,26 @@
+appId: com.saucelabs.mydemoapp.rn
+name: "Use only digits as the full name"
+---
+- runFlow: ../subflows/start-app.yaml
+- runFlow:
+    file: ../subflows/add-to-cart.yaml
+    env:
+      PRODUCT: "Sauce Labs Backpack"
+- tapOn: "cart badge"
+- runFlow: ../subflows/checkout-to-address.yaml
+- tapOn: "Full Name.*input field"
+- inputText: "12345"
+- tapOn: "Address Line 1.*input field"
+- inputText: "12 Analytical Street"
+- tapOn: "City.*input field"
+- inputText: "London"
+- tapOn: "Zip Code.*input field"
+- inputText: "N1 9GU"
+- tapOn: "Country.*input field"
+- inputText: "United Kingdom"
+- scrollUntilVisible:
+    element: "To Payment.*"
+    optional: true
+- tapOn:
+    text: "To Payment.*"
+    optional: true

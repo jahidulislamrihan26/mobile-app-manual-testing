@@ -1,0 +1,10 @@
+appId: com.saucelabs.mydemoapp.rn
+name: "Press minus when the quantity is 1"
+---
+- runFlow: ../subflows/start-app.yaml
+- runFlow:
+    file: ../subflows/add-to-cart.yaml
+    env:
+      PRODUCT: "Sauce Labs Backpack"
+- tapOn: "cart badge"
+- tapOn: "counter minus button"

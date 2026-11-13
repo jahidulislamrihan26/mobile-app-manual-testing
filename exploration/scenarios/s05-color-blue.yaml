@@ -1,0 +1,10 @@
+appId: com.saucelabs.mydemoapp.rn
+name: "Choose a colour, then check the cart"
+---
+- runFlow: ../subflows/start-app.yaml
+- tapOn: "Sauce Labs Backpack"
+- tapOn:
+    text: "blue circle"
+    optional: true
+- tapOn: "Add To Cart button"
+- tapOn: "cart badge"

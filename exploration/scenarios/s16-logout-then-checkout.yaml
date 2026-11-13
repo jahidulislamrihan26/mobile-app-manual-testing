@@ -1,0 +1,17 @@
+appId: com.saucelabs.mydemoapp.rn
+name: "Log out, then try to check out again"
+---
+- runFlow: ../subflows/start-app.yaml
+- runFlow:
+    file: ../subflows/add-to-cart.yaml
+    env:
+      PRODUCT: "Sauce Labs Backpack"
+- tapOn: "cart badge"
+- runFlow: ../subflows/checkout-to-address.yaml
+- tapOn: "open menu"
+- tapOn: "menu item log out"
+- waitForAnimationToEnd
+- tapOn: "cart badge"
+- tapOn:
+    text: "Proceed To Checkout.*"
+    optional: true

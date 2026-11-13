@@ -1,0 +1,17 @@
+appId: com.saucelabs.mydemoapp.rn
+name: "Reset App State with an item in the cart"
+---
+- runFlow: ../subflows/start-app.yaml
+- runFlow:
+    file: ../subflows/add-to-cart.yaml
+    env:
+      PRODUCT: "Sauce Labs Backpack"
+- tapOn: "open menu"
+- tapOn: "menu item reset app"
+- waitForAnimationToEnd
+- tapOn:
+    text: "Reset App"
+    optional: true
+- tapOn:
+    text: "OK"
+    optional: true

@@ -1,0 +1,5 @@
+appId: com.saucelabs.mydemoapp.rn
+name: "Open the cart with nothing in it"
+---
+- runFlow: ../subflows/start-app.yaml
+- tapOn: "cart badge"

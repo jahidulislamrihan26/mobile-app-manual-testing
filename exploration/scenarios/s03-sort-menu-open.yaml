@@ -1,0 +1,6 @@
+appId: com.saucelabs.mydemoapp.rn
+name: "The sort menu itself"
+---
+- runFlow: ../subflows/start-app.yaml
+- tapOn: "sort button"
+- waitForAnimationToEnd
