@@ -1,0 +1,16 @@
+{
+  "total": 38,
+  "executed": 32,
+  "pass": 24,
+  "fail": 8,
+  "notRun": 6,
+  "smoke": 5,
+  "smokePass": 5,
+  "defects": 8,
+  "bySeverity": {
+    "Critical": 1,
+    "Major": 3,
+    "Minor": 3,
+    "Cosmetic": 1
+  }
+}

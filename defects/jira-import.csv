@@ -1,0 +1,86 @@
+"Summary","Issue Type","Priority","Labels","Component","Environment","Description"
+"BUG-001: Back from the order confirmation opens a review screen that lets an empty order be placed","Bug","Highest","critical-severity mobile android","Checkout","My Demo App 1.3.0 build 244, Android 11 emulator (API 30)","*Severity:* Critical
+*Steps to reproduce*
+# Add any product to the cart and complete checkout (log in as bob@example.com / 10203040, any valid address, card 4111 1111 1111 1111, 12/30, 123)
+# On the ""Checkout Complete"" screen press the Android Back button
+*Expected*
+The catalog (or the confirmation screen again). There must be no way back into checkout with an empty cart.
+*Actual*
+A ""Review your order"" screen opens: ""No elements in the cart."", an empty delivery address and card, ""DHL Standard Delivery $5.99"", ""Total: 0 item $5.99"" and a red Place Order button that is active.
+*Test case:* TC-032
+*Evidence:* evidence/back-after-order-empty-cart.png"
+"BUG-002: The review screen shows the full card number","Bug","High","major-severity mobile android","Checkout","My Demo App 1.3.0 build 244, Android 11 emulator (API 30)","*Severity:* Major
+*Steps to reproduce*
+# Add a product; start checkout and log in
+# Enter an address; on the payment step enter card 4111 1111 1111 1111, expiry 12/30, code 123
+# Tap Review Order
+*Expected*
+Only the last four digits of the card, for example ""•••• 1111"". The expiry is also usually hidden.
+*Actual*
+The Payment Method block shows ""4111 1111 1111 1111"" and ""Exp: 12/30"" in full.
+*Test case:* TC-028
+*Evidence:* evidence/review-shows-full-card-number.png"
+"BUG-003: A 1-digit security code is accepted","Bug","High","major-severity mobile android","Checkout","My Demo App 1.3.0 build 244, Android 11 emulator (API 30)","*Severity:* Major
+*Steps to reproduce*
+# Start checkout and reach the payment step
+# Card 4111 1111 1111 1111, expiry 12/30, security code ""1""
+# Tap Review Order
+*Expected*
+Refused with a message: the security code has 3 or 4 digits.
+*Actual*
+The review screen opens and the order can be placed.
+*Test case:* TC-027
+*Evidence:* evidence/one-digit-security-code-accepted.png"
+"BUG-004: An expired card is refused without any message","Bug","High","major-severity mobile android","Checkout","My Demo App 1.3.0 build 244, Android 11 emulator (API 30)","*Severity:* Major
+*Steps to reproduce*
+# Start checkout and reach the payment step
+# Card 4111 1111 1111 1111, expiry 01/20, security code 123
+# Tap Review Order
+*Expected*
+A message next to the expiry date, as the address form gives for empty fields.
+*Actual*
+Nothing happens: the payment screen stays, no error text appears on the screen or in its accessibility tree.
+*Test case:* TC-026
+*Evidence:* evidence/expired-card-no-message.png"
+"BUG-005: A zip code of symbols is accepted","Bug","Medium","minor-severity mobile android","Checkout","My Demo App 1.3.0 build 244, Android 11 emulator (API 30)","*Severity:* Minor
+*Steps to reproduce*
+# Start checkout and reach the address form
+# Fill all fields with valid values but Zip Code ""!!!???""
+# Tap To Payment
+*Expected*
+An error on the zip code field.
+*Actual*
+The payment step opens.
+*Test case:* TC-022
+*Evidence:* evidence/symbols-zip-accepted.png"
+"BUG-006: A full name of only digits is accepted","Bug","Medium","minor-severity mobile android","Checkout","My Demo App 1.3.0 build 244, Android 11 emulator (API 30)","*Severity:* Minor
+*Steps to reproduce*
+# Start checkout and reach the address form
+# Full Name ""12345""; other fields valid
+# Tap To Payment
+*Expected*
+An error on the name field.
+*Actual*
+The payment step opens.
+*Test case:* TC-023
+*Evidence:* evidence/digits-only-name-accepted.png"
+"BUG-007: With the keyboard open, the address form does not scroll to the fields being filled","Bug","Medium","minor-severity mobile android","Checkout","My Demo App 1.3.0 build 244, Android 11 emulator (API 30)","*Severity:* Minor
+*Steps to reproduce*
+# Start checkout and reach the address form on a phone with the on-screen keyboard (Android 11 emulator, Google keyboard)
+# Type into Full Name and then Address Line 1
+*Expected*
+The form scrolls so that the next field (Address Line 2, City) stays visible above the keyboard.
+*Actual*
+Only Full Name, Address Line 1 and the top of Address Line 2 are visible; the To Payment panel and the keyboard cover the rest and the form did not scroll. Whether a person can scroll the form by hand with the keyboard open was not tested.
+*Test case:* TC-024
+*Evidence:* evidence/keyboard-covers-address-fields.png"
+"BUG-008: Log-out confirmation has a repeated word: ""Are you sure you sure""","Bug","Low","cosmetic-severity mobile android","Menu","My Demo App 1.3.0 build 244, Android 11 emulator (API 30)","*Severity:* Cosmetic
+*Steps to reproduce*
+# Open the menu
+# Tap Log Out
+*Expected*
+""Are you sure you want to log out?""
+*Actual*
+""Are you sure you sure you want to logout?""
+*Test case:* TC-019
+*Evidence:* evidence/logout-dialog-typo.png"

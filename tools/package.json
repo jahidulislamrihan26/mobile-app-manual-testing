@@ -1,0 +1,19 @@
+{
+  "name": "mobile-manual-testing-tools",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Builds the Excel workbook, CSV files and defect pages for the mobile manual test suite",
+  "license": "MIT",
+  "author": "Md. Jahidul Islam Rihan",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "build": "node build.js",
+    "test": "node --test \"test/*.test.js\""
+  },
+  "dependencies": {
+    "exceljs": "^4.4.0"
+  },
+  "overrides": {
+    "uuid": "^11.1.1"
+  }
+}
