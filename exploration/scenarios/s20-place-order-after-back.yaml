@@ -1,0 +1,57 @@
+appId: com.saucelabs.mydemoapp.rn
+name: "Press Back after an order, then tap Place Order"
+---
+- runFlow: ../subflows/start-app.yaml
+- runFlow:
+    file: ../subflows/add-to-cart.yaml
+    env:
+      PRODUCT: "Sauce Labs Backpack"
+- tapOn: "cart badge"
+- runFlow: ../subflows/checkout-to-address.yaml
+- tapOn: "Full Name.*input field"
+- inputText: "Ada Lovelace"
+- hideKeyboard
+- tapOn: "Address Line 1.*input field"
+- inputText: "12 Analytical Street"
+- hideKeyboard
+- tapOn: "City.*input field"
+- inputText: "London"
+- hideKeyboard
+- tapOn: "Zip Code.*input field"
+- inputText: "N1 9GU"
+- hideKeyboard
+- tapOn: "Country.*input field"
+- inputText: "United Kingdom"
+- hideKeyboard
+- scrollUntilVisible:
+    element: "To Payment.*"
+    optional: true
+- tapOn:
+    text: "To Payment.*"
+    optional: true
+- runFlow:
+    file: ../subflows/fill-payment.yaml
+    env:
+      CARD_NUMBER: "4111111111111111"
+      EXPIRY: "1230"
+      CVV: "123"
+- scrollUntilVisible:
+    element: "Review Order.*"
+    optional: true
+- tapOn:
+    text: "Review Order.*"
+    optional: true
+- scrollUntilVisible:
+    element: "Place Order.*"
+    optional: true
+- tapOn:
+    text: "Place Order.*"
+    optional: true
+- back
+- scrollUntilVisible:
+    element: "Place Order.*"
+    optional: true
+- tapOn:
+    text: "Place Order.*"
+    optional: true
+- waitForAnimationToEnd
