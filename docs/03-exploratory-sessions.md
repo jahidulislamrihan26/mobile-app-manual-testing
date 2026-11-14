@@ -13,7 +13,7 @@ Each session below has a charter, what was tried (the scenario files in [explora
 | Zip code `!!!???` | Accepted: **BUG-005** |
 | Full name `12345` | Accepted: **BUG-006** |
 | Expiry `01/20` (in the past) | Refused, but silently: **BUG-004** |
-| Security code `1` | Accepted: **BUG-003** |
+| Security code `1` | Accepted, and Place Order confirms the order: **BUG-003** |
 | Card number that fails the checksum (`...1112`) | Refused (stays on the payment step) |
 | All fields empty | Refused with a message for each field |
 
@@ -39,7 +39,7 @@ No money defect found in these paths. Shipping is a flat $5.99 in every case tri
 
 | Tried | Result |
 |---|---|
-| Press Back on the order confirmation | An empty "Review your order" screen with a working Place Order button: **BUG-001** (Critical) |
+| Press Back on the order confirmation, then tap Place Order | An empty "Review your order" screen; Place Order then shows "Checkout Complete: Thank you for your order": **BUG-001** (Critical) |
 | Minus at quantity 1 | The item is removed at once, with no confirmation |
 | Open the cart with nothing in it | A clear "No Items" message with a Go Shopping button |
 | After an order, Continue Shopping | Catalog shown, cart badge cleared |

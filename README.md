@@ -10,11 +10,11 @@ A manual test package for a mobile shopping app, built the way a QA team hands w
 
 | | |
 |---|---|
-| Test cases | **38**, traced to modules; 32 executed, 24 passed, 8 failed, 6 not run |
+| Test cases | **38**, traced to 10 requirements and to the Maestro and Appium tests that automate them; 32 executed, 24 passed, 8 failed, 6 not run |
 | Smoke | 5 of 5 passed: a customer can complete a purchase |
 | Defects | **8** with steps, expected and actual results, screenshots: **1 Critical**, 3 Major, 3 Minor, 1 Cosmetic |
-| Worst finding | After an order, pressing Back opens a checkout screen with an empty cart and an active **Place Order** button |
-| Other findings | Full card number shown on the review screen; a 1-digit security code accepted; an expired card refused with no message |
+| Worst finding | After an order, pressing Back opens a checkout screen with an empty cart, and **Place Order confirms an order with no items** (verified) |
+| Other findings | Full card number shown on the review screen; a 1-digit security code accepted and the order confirmed; an expired card refused with no message |
 | Verdict | **Not ready for release** (exit rule not met) |
 | Not tested | iOS, other Android versions and screen sizes, real devices, rotation, interruptions, accessibility with a screen reader |
 
@@ -27,7 +27,8 @@ A manual test package for a mobile shopping app, built the way a QA team hands w
 | Exploratory sessions: charters, what was tried, what was found | [docs/03-exploratory-sessions.md](docs/03-exploratory-sessions.md) |
 | **QA summary report** (start here): verdict, defects, recommendations, gaps | [docs/04-qa-summary-report.md](docs/04-qa-summary-report.md) |
 | Defect workflow: report fields, severity versus priority, life of a defect | [docs/05-defect-workflow.md](docs/05-defect-workflow.md) |
-| Excel workbook: summary, test cases with results, defects | [test-suite/Mobile-Test-Suite.xlsx](test-suite/Mobile-Test-Suite.xlsx) |
+| Traceability matrix: 10 requirements, every case traced, state of each requirement | [docs/06-traceability-matrix.md](docs/06-traceability-matrix.md) |
+| Excel workbook: summary, test cases with results, traceability, defects | [test-suite/Mobile-Test-Suite.xlsx](test-suite/Mobile-Test-Suite.xlsx) |
 | Test cases as CSV | [test-suite/test-cases.csv](test-suite/test-cases.csv) |
 | Defect reports, log and a [Jira import file](defects/jira-import.csv) | [defects/](defects) |
 | Screenshots and a screen recording of a full purchase | [evidence/](evidence) |

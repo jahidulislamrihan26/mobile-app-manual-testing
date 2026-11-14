@@ -25,9 +25,9 @@ Pass rate of the executed cases: 24 of 32 (75%). The failures are concentrated i
 
 | ID | Severity | Summary |
 |---|---|---|
-| [BUG-001](../defects/BUG-001.md) | **Critical** | Back from the order confirmation opens a review screen that lets an empty order be placed |
+| [BUG-001](../defects/BUG-001.md) | **Critical** | Back from the order confirmation opens a review screen that lets an empty order be placed (verified: Place Order confirms it) |
 | [BUG-002](../defects/BUG-002.md) | Major | The review screen shows the full card number |
-| [BUG-003](../defects/BUG-003.md) | Major | A 1-digit security code is accepted |
+| [BUG-003](../defects/BUG-003.md) | Major | A 1-digit security code is accepted (verified: the order is confirmed) |
 | [BUG-004](../defects/BUG-004.md) | Major | An expired card is refused without any message |
 | [BUG-005](../defects/BUG-005.md) | Minor | A zip code of symbols is accepted |
 | [BUG-006](../defects/BUG-006.md) | Minor | A full name of only digits is accepted |

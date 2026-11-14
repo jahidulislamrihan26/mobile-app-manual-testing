@@ -12,5 +12,7 @@
     "Major": 3,
     "Minor": 3,
     "Cosmetic": 1
-  }
+  },
+  "automated": 14,
+  "requirements": 10
 }

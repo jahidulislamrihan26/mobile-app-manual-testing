@@ -61,7 +61,7 @@ const testCases = [
   { id: 'TC-026', module: 'Checkout', title: 'An expired card is refused with a message', type: 'Negative', priority: 'High', how: 'exploration',
     steps: 'Card 4111 1111 1111 1111, expiry 01/20, code 123; tap Review Order', expected: 'Refused, with a message about the expiry date', actual: 'Refused (stays on the payment step) but no message is shown anywhere', status: 'Fail', defect: 'BUG-004', evidence: E('expired-card-no-message.png') },
   { id: 'TC-027', module: 'Checkout', title: 'A 1-digit security code is refused', type: 'Boundary', priority: 'High', how: 'exploration',
-    steps: 'Valid card and expiry, security code "1"; tap Review Order', expected: 'Refused: a security code has 3 or 4 digits', actual: 'Accepted; the review screen opened', status: 'Fail', defect: 'BUG-003', evidence: E('one-digit-security-code-accepted.png') },
+    steps: 'Valid card and expiry, security code "1"; tap Review Order', expected: 'Refused: a security code has 3 or 4 digits', actual: 'Accepted; the review screen opened and Place Order confirmed the order', status: 'Fail', defect: 'BUG-003', evidence: E('one-digit-security-code-accepted.png') },
   { id: 'TC-028', module: 'Checkout', title: 'The review screen hides most of the card number', type: 'Security', priority: 'High', how: 'exploration',
     steps: 'Complete address and payment; open the review screen', expected: 'Only the last four digits are shown', actual: 'The full 16-digit card number is shown', status: 'Fail', defect: 'BUG-002', evidence: E('review-shows-full-card-number.png') },
   { id: 'TC-029', module: 'Checkout', title: 'Review total equals the items plus shipping', type: 'Functional', priority: 'Critical', how: 'exploration',
@@ -71,7 +71,7 @@ const testCases = [
   { id: 'TC-031', module: 'Checkout', title: 'After an order the cart is empty and the badge is cleared', type: 'Functional', priority: 'High', how: 'exploration',
     steps: 'Complete an order; Continue Shopping', expected: 'Catalog shown; no count on the cart icon', actual: 'As expected', status: 'Pass', evidence: E('catalog-after-order.png') },
   { id: 'TC-032', module: 'Checkout', title: 'Back from the confirmation screen does not allow another order', type: 'Negative', priority: 'Critical', how: 'exploration',
-    steps: 'Complete an order; on the confirmation screen press the Android Back button', expected: 'The catalog, or the confirmation again. Never a way to place an order', actual: 'A review screen with "No elements in the cart.", a blank address and card, total $5.99 and an active Place Order button', status: 'Fail', defect: 'BUG-001', evidence: E('back-after-order-empty-cart.png') },
+    steps: 'Complete an order; on the confirmation screen press the Android Back button', expected: 'The catalog, or the confirmation again. Never a way to place an order', actual: 'A review screen with "No elements in the cart.", a blank address and card, total $5.99 and an active Place Order button. Tapping it shows "Checkout Complete: Thank you for your order"', status: 'Fail', defect: 'BUG-001', evidence: E('back-after-order-empty-cart.png') },
   // ---- Menu
   { id: 'TC-033', module: 'Menu', title: 'About shows the app version', type: 'Functional', priority: 'Low', how: 'exploration',
     steps: 'Menu > About', expected: 'Version and build', actual: '"V.1.3.0-build 244"', status: 'Pass', evidence: E('about-screen.png') },
@@ -86,20 +86,22 @@ const testCases = [
 
 const defects = [
   { id: 'BUG-001', title: 'Back from the order confirmation opens a review screen that lets an empty order be placed', severity: 'Critical', priority: 'High', module: 'Checkout', cases: 'TC-032', evidence: 'back-after-order-empty-cart.png',
-    steps: ['Add any product to the cart and complete checkout (log in as bob@example.com / 10203040, any valid address, card 4111 1111 1111 1111, 12/30, 123)', 'On the "Checkout Complete" screen press the Android Back button'],
-    expected: 'The catalog (or the confirmation screen again). There must be no way back into checkout with an empty cart.',
-    actual: 'A "Review your order" screen opens: "No elements in the cart.", an empty delivery address and card, "DHL Standard Delivery $5.99", "Total: 0 item $5.99" and a red Place Order button that is active.',
-    impact: 'A customer, or a double tap on Back, can submit an order with no items and no address, charging shipping only. Orders with no goods or no delivery address reach fulfilment and support.' },
+    extra: ['empty-order-confirmed.png'],
+    steps: ['Add any product to the cart and complete checkout (log in as bob@example.com / 10203040, any valid address, card 4111 1111 1111 1111, 12/30, 123)', 'On the "Checkout Complete" screen press the Android Back button', 'On the screen that opens, tap Place Order'],
+    expected: 'The catalog (or the confirmation screen again). There must be no way back into checkout with an empty cart, and no order can be placed without items.',
+    actual: 'After Back, a "Review your order" screen opens: "No elements in the cart.", an empty delivery address and card, "DHL Standard Delivery $5.99", "Total: 0 item $5.99" and a red Place Order button that is active. Tapping Place Order shows "Checkout Complete: Thank you for your order. Your new swag is on its way" (second screenshot).',
+    impact: 'An order with no items and no address is accepted and confirmed to the customer, with shipping as the only charge. A double tap on Back is enough to get there. Such orders would reach fulfilment and support.' },
   { id: 'BUG-002', title: 'The review screen shows the full card number', severity: 'Major', priority: 'High', module: 'Checkout', cases: 'TC-028', evidence: 'review-shows-full-card-number.png',
     steps: ['Add a product; start checkout and log in', 'Enter an address; on the payment step enter card 4111 1111 1111 1111, expiry 12/30, code 123', 'Tap Review Order'],
     expected: 'Only the last four digits of the card, for example "•••• 1111". The expiry is also usually hidden.',
     actual: 'The Payment Method block shows "4111 1111 1111 1111" and "Exp: 12/30" in full.',
     impact: 'A card number on screen can be read by someone nearby and appears in screenshots, screen recordings and support tickets. Card standards (PCI DSS) expect it to be masked when displayed.' },
   { id: 'BUG-003', title: 'A 1-digit security code is accepted', severity: 'Major', priority: 'Medium', module: 'Checkout', cases: 'TC-027', evidence: 'one-digit-security-code-accepted.png',
-    steps: ['Start checkout and reach the payment step', 'Card 4111 1111 1111 1111, expiry 12/30, security code "1"', 'Tap Review Order'],
+    extra: ['short-cvv-order-confirmed.png'],
+    steps: ['Start checkout and reach the payment step', 'Card 4111 1111 1111 1111, expiry 12/30, security code "1"', 'Tap Review Order, then Place Order'],
     expected: 'Refused with a message: the security code has 3 or 4 digits.',
-    actual: 'The review screen opens and the order can be placed.',
-    impact: 'Bad payment details go to the payment provider and fail there, after the customer thinks the order is going through.' },
+    actual: 'The review screen opens, and tapping Place Order shows "Checkout Complete: Thank you for your order" (second screenshot).',
+    impact: 'An invalid security code is accepted and the customer is told the order is on its way. In a real shop the payment provider would reject it afterwards, and the customer would learn that late, or not at all.' },
   { id: 'BUG-004', title: 'An expired card is refused without any message', severity: 'Major', priority: 'Medium', module: 'Checkout', cases: 'TC-026', evidence: 'expired-card-no-message.png',
     steps: ['Start checkout and reach the payment step', 'Card 4111 1111 1111 1111, expiry 01/20, security code 123', 'Tap Review Order'],
     expected: 'A message next to the expiry date, as the address form gives for empty fields.',
@@ -127,4 +129,38 @@ const defects = [
     impact: 'Looks careless; the word "logout" is also a noun where the verb "log out" is meant.' },
 ];
 
-module.exports = { testCases, defects };
+// What the app is supposed to do, as testable statements. Every case traces to one of these.
+const requirements = [
+  { id: 'REQ-01', text: 'A customer can browse the catalog and sort it by name or price' },
+  { id: 'REQ-02', text: 'A customer can see a product and choose its options (colour, quantity)' },
+  { id: 'REQ-03', text: 'A customer can add products to a cart, change quantities and remove them, and the cart shows the right totals' },
+  { id: 'REQ-04', text: 'A customer can log in and out; wrong or locked-out accounts are refused clearly; the password is hidden' },
+  { id: 'REQ-05', text: 'Checkout collects a valid shipping address and refuses invalid input' },
+  { id: 'REQ-06', text: 'Checkout collects a valid card and refuses invalid input, and protects the card data' },
+  { id: 'REQ-07', text: 'A customer can review and place an order once, and cannot place an order that is empty or already placed' },
+  { id: 'REQ-08', text: 'Prices, shipping and totals shown are correct at every step' },
+  { id: 'REQ-09', text: 'The menu and app information work as labelled' },
+  { id: 'REQ-10', text: 'The app works across supported devices, OS versions and interruptions' },
+];
+
+// requirement, and the automated tests that execute the same behaviour (Maestro flow ids, Appium test ids)
+const links = {
+  'TC-001': ['REQ-01', 'Maestro TC-001; Appium TC-101'], 'TC-002': ['REQ-01', ''], 'TC-003': ['REQ-01', ''], 'TC-004': ['REQ-01', ''],
+  'TC-005': ['REQ-02', 'Maestro TC-002; Appium TC-102'], 'TC-006': ['REQ-02', ''],
+  'TC-007': ['REQ-03', 'Maestro TC-003; Appium TC-103'], 'TC-008': ['REQ-03', ''], 'TC-009': ['REQ-03', 'Maestro TC-004; Appium TC-104'],
+  'TC-010': ['REQ-03', ''], 'TC-011': ['REQ-03', 'Maestro TC-005; Appium TC-105'], 'TC-012': ['REQ-08', 'Maestro TC-006 (cart sum only)'], 'TC-013': ['REQ-03', ''],
+  'TC-014': ['REQ-04', 'Maestro TC-009; Appium TC-108'], 'TC-015': ['REQ-04', 'Maestro TC-007; Appium TC-106'], 'TC-016': ['REQ-04', 'Maestro TC-007; Appium TC-106'],
+  'TC-017': ['REQ-04', 'Maestro TC-007; Appium TC-106'], 'TC-018': ['REQ-04', ''], 'TC-019': ['REQ-04', ''], 'TC-020': ['REQ-04', ''],
+  'TC-021': ['REQ-05', 'Maestro TC-008; Appium TC-107'], 'TC-022': ['REQ-05', ''], 'TC-023': ['REQ-05', ''], 'TC-024': ['REQ-05', ''],
+  'TC-025': ['REQ-06', 'Maestro TC-010; Appium TC-109'], 'TC-026': ['REQ-06', ''], 'TC-027': ['REQ-06', ''], 'TC-028': ['REQ-06', ''],
+  'TC-029': ['REQ-08', 'Maestro TC-009; Appium TC-108'], 'TC-030': ['REQ-07', 'Maestro TC-009; Appium TC-108'], 'TC-031': ['REQ-07', ''], 'TC-032': ['REQ-07', ''],
+  'TC-033': ['REQ-09', ''], 'TC-034': ['REQ-09', ''],
+  'TC-035': ['REQ-10', ''], 'TC-036': ['REQ-10', ''], 'TC-037': ['REQ-10', ''], 'TC-038': ['REQ-10', ''],
+};
+for (const t of testCases) {
+  const l = links[t.id];
+  if (!l) throw new Error(`${t.id} has no requirement`);
+  [t.req, t.auto] = l;
+}
+
+module.exports = { testCases, defects, requirements };

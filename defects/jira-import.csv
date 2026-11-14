@@ -3,10 +3,11 @@
 *Steps to reproduce*
 # Add any product to the cart and complete checkout (log in as bob@example.com / 10203040, any valid address, card 4111 1111 1111 1111, 12/30, 123)
 # On the ""Checkout Complete"" screen press the Android Back button
+# On the screen that opens, tap Place Order
 *Expected*
-The catalog (or the confirmation screen again). There must be no way back into checkout with an empty cart.
+The catalog (or the confirmation screen again). There must be no way back into checkout with an empty cart, and no order can be placed without items.
 *Actual*
-A ""Review your order"" screen opens: ""No elements in the cart."", an empty delivery address and card, ""DHL Standard Delivery $5.99"", ""Total: 0 item $5.99"" and a red Place Order button that is active.
+After Back, a ""Review your order"" screen opens: ""No elements in the cart."", an empty delivery address and card, ""DHL Standard Delivery $5.99"", ""Total: 0 item $5.99"" and a red Place Order button that is active. Tapping Place Order shows ""Checkout Complete: Thank you for your order. Your new swag is on its way"" (second screenshot).
 *Test case:* TC-032
 *Evidence:* evidence/back-after-order-empty-cart.png"
 "BUG-002: The review screen shows the full card number","Bug","High","major-severity mobile android","Checkout","My Demo App 1.3.0 build 244, Android 11 emulator (API 30)","*Severity:* Major
@@ -24,11 +25,11 @@ The Payment Method block shows ""4111 1111 1111 1111"" and ""Exp: 12/30"" in ful
 *Steps to reproduce*
 # Start checkout and reach the payment step
 # Card 4111 1111 1111 1111, expiry 12/30, security code ""1""
-# Tap Review Order
+# Tap Review Order, then Place Order
 *Expected*
 Refused with a message: the security code has 3 or 4 digits.
 *Actual*
-The review screen opens and the order can be placed.
+The review screen opens, and tapping Place Order shows ""Checkout Complete: Thank you for your order"" (second screenshot).
 *Test case:* TC-027
 *Evidence:* evidence/one-digit-security-code-accepted.png"
 "BUG-004: An expired card is refused without any message","Bug","High","major-severity mobile android","Checkout","My Demo App 1.3.0 build 244, Android 11 emulator (API 30)","*Severity:* Major

@@ -2,12 +2,13 @@
 const fs = require('fs');
 const path = require('path');
 const ExcelJS = require('exceljs');
-const { testCases, defects } = require('./suite-data');
+const { testCases, defects, requirements } = require('./suite-data');
 
 const root = path.join(__dirname, '..');
 const out = (...p) => path.join(root, ...p);
 fs.mkdirSync(out('test-suite'), { recursive: true });
 fs.mkdirSync(out('defects'), { recursive: true });
+fs.mkdirSync(out('docs'), { recursive: true });
 
 const csvCell = (v) => '"' + String(v ?? '').replace(/"/g, '""') + '"';
 const csv = (header, rows) => [header.map(csvCell).join(','), ...rows.map((r) => r.map(csvCell).join(','))].join('\n') + '\n';
@@ -26,9 +27,30 @@ const stats = {
 };
 
 // ---- test cases CSV
-const tcHeader = ['ID', 'Module', 'Title', 'Type', 'Priority', 'Suite', 'Steps', 'Expected result', 'Actual result', 'Status', 'Defect', 'Executed by', 'Evidence'];
+const tcHeader = ['ID', 'Requirement', 'Module', 'Title', 'Type', 'Priority', 'Suite', 'Steps', 'Expected result', 'Actual result', 'Status', 'Defect', 'Executed by', 'Automated by', 'Evidence'];
 const how = { maestro: 'Maestro flow (Android emulator)', exploration: 'Exploratory session scenario (Android emulator)', '-': '' };
-const tcRows = testCases.map((t) => [t.id, t.module, t.title, t.type, t.priority, t.smoke ? 'Smoke + Regression' : 'Regression', t.steps, t.expected, t.actual, t.status, t.defect || '', how[t.how], t.evidence ? 'evidence/' + t.evidence : '']);
+const tcRows = testCases.map((t) => [t.id, t.req, t.module, t.title, t.type, t.priority, t.smoke ? 'Smoke + Regression' : 'Regression', t.steps, t.expected, t.actual, t.status, t.defect || '', how[t.how], t.auto, t.evidence ? 'evidence/' + t.evidence : '']);
+
+// ---- traceability matrix (requirement -> cases -> result)
+const reqRows = requirements.map((r) => {
+  const cs = testCases.filter((t) => t.req === r.id);
+  const n = (s) => cs.filter((t) => t.status === s).length;
+  const defs = [...new Set(cs.map((t) => t.defect).filter(Boolean))];
+  return { ...r, cases: cs.map((t) => t.id), total: cs.length, pass: n('Pass'), fail: n('Fail'), notRun: n('Not run'), defects: defs };
+});
+const verdict = (r) => (r.fail ? 'Failing' : r.notRun === r.total ? 'Not tested' : r.notRun ? 'Passing, partly untested' : 'Passing');
+fs.writeFileSync(out('docs', '06-traceability-matrix.md'), `# Traceability matrix
+
+Generated from \`tools/suite-data.js\` by \`npm run build\`. It answers two questions: *is every requirement covered by a test*, and *what is the state of each requirement*.
+
+| Requirement | Statement | Cases | Pass | Fail | Not run | Defects | State |
+|---|---|---|---:|---:|---:|---|---|
+${reqRows.map((r) => `| ${r.id} | ${r.text} | ${r.cases.join(', ')} | ${r.pass} | ${r.fail} | ${r.notRun} | ${r.defects.join(', ') || ''} | ${verdict(r)} |`).join('\n')}
+
+Every requirement has at least one case, and every case traces to a requirement (checked by the data tests). The \`Automated by\` column of the [test cases](../test-suite/test-cases.csv) shows which cases are also executed by the [Maestro](https://github.com/jahidulislamrihan26/mobile-e2e-maestro) flows and the [Appium](https://github.com/jahidulislamrihan26/appium-android-pytest) tests, so a failing automated test can be traced back to the requirement it protects.
+`);
+stats.automated = count(testCases, (t) => t.auto);
+stats.requirements = requirements.length;
 fs.writeFileSync(out('test-suite', 'test-cases.csv'), csv(tcHeader, tcRows));
 
 // ---- defect pages and logs
@@ -55,7 +77,7 @@ ${d.expected}
 ${d.actual}
 
 ## Evidence
-${link(d.evidence)}
+${[d.evidence, ...(d.extra || [])].map(link).join('\n\n')}
 
 > Impact if real: ${d.impact}
 >
@@ -106,14 +128,19 @@ fs.writeFileSync(out('defects', 'jira-import.csv'), csv(['Summary', 'Issue Type'
   const tcs = wb.addWorksheet('Test Cases');
   tcs.addRow(tcHeader);
   tcRows.forEach((r) => tcs.addRow(r));
-  style(tcs, [9, 14, 42, 13, 10, 18, 44, 44, 44, 10, 10, 26, 30]);
-  tcs.autoFilter = { from: 'A1', to: 'M1' };
+  style(tcs, [9, 11, 14, 42, 13, 10, 18, 44, 44, 44, 10, 10, 26, 28, 30]);
+  tcs.autoFilter = { from: 'A1', to: 'O1' };
   tcs.eachRow((row, n) => {
     if (n === 1) return;
-    const st = row.getCell(10);
+    const st = row.getCell(11);
     const color = { Pass: 'FFC6EFCE', Fail: 'FFFFC7CE', 'Not run': 'FFFFEB9C' }[st.value];
     if (color) st.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: color } };
   });
+
+  const tr = wb.addWorksheet('Traceability');
+  tr.addRow(['Requirement', 'Statement', 'Cases', 'Pass', 'Fail', 'Not run', 'Defects', 'State']);
+  reqRows.forEach((r) => tr.addRow([r.id, r.text, r.cases.join(', '), r.pass, r.fail, r.notRun, r.defects.join(', '), verdict(r)]));
+  style(tr, [13, 60, 40, 7, 7, 9, 22, 24]);
 
   const bugs = wb.addWorksheet('Defects');
   bugs.addRow(['ID', 'Title', 'Severity', 'Priority', 'Module', 'Status', 'Test case', 'Steps', 'Expected', 'Actual', 'Evidence']);
